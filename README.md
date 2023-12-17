@@ -6,6 +6,8 @@ SA.js is a JavaScript script that allows you to search for specific text within 
 
 ## Usage Example
 
+Import:```<script src="https://bbs.minecraftbox.link/static/js/sa.js"></script>```
+
 ```javascript
 const myFinder = new Finder("https://www.example.com", "Hello, World!");
 

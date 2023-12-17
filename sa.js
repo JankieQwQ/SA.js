@@ -27,12 +27,31 @@ class finder {
     return this.urlopen()
       .then((responseText) => {
         const lines = responseText.split("\n");
+        const results = [];
         for (let i = 0; i < lines.length; i++) {
           if (lines[i].includes(this.findtext)) {
-            return lines[i];
+            results.push(lines[i]);
           }
         }
-        return null;
+        return results.length;
+      })
+      .catch((error) => {
+        console.log(error);
+        return "[SA.JS Error] Cannot open webpage.";
+      });
+  }
+  
+  findmultiple() {
+    return this.urlopen()
+      .then((responseText) => {
+        const lines = responseText.split("\n");
+        const results = [];
+        for (let i = 0; i < lines.length; i++) {
+          if (lines[i].includes(this.findtext)) {
+            results.push(lines[i]);
+          }
+        }
+        return results;
       })
       .catch((error) => {
         console.log(error);

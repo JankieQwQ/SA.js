@@ -15,7 +15,7 @@ class finder {
                   if (Http.status === 200) {
                       resolve(Http.responseText);
                   } else {
-                      reject(new Error("请求失败"));
+                      reject(new Error("[SA.JS Error] Cannot open webpage."));
                   }
               }
           };
@@ -31,11 +31,11 @@ class finder {
                       return lines[i];
                   }
               }
-              return "未找到指定文本";
+              return null;
           })
           .catch((error) => {
               console.log(error);
-              return "请求失败";
+              return "[SA.JS Error] Cannot open webpage.";
           });
   }
 }

@@ -1,8 +1,9 @@
 class Finder {
-  constructor(url, findtext) {
+  constructor(url, findtext, domSelector = "body") {
     this.url = url;
     this.findtext = findtext;
-    this.body = "";
+    this.domSelector = domSelector;
+    this.body = null;
     this.responseText = "";
     this.cache = new Map();
   }
@@ -20,6 +21,11 @@ class Finder {
           throw new Error("[SA.JS Error] Cannot open webpage.");
         }
       }
+      const parser = new DOMParser();
+      this.body = parser.parseFromString(this.responseText, "text/html").querySelector(this.domSelector);
+      if (!this.body) {
+        throw new Error("[SA.JS Error] Cannot find DOM element with selector: " + this.domSelector);
+      }
     } catch (error) {
       console.log(error);
       throw new Error("[SA.JS Error] Cannot open webpage.");
@@ -30,7 +36,7 @@ class Finder {
     return this.urlopen()
       .then(() => {
         const regex = new RegExp(this.findtext, "gi");
-        const matches = this.responseText.match(regex);
+        const matches = this.body.textContent.match(regex);
         if (matches) {
           return matches.length;
         } else {
@@ -51,7 +57,7 @@ class Finder {
     try {
       await this.urlopen();
       const regex = new RegExp(this.findtext, "gi");
-      const lines = this.responseText.split("\n");
+      const lines = this.body.textContent.split("\n");
       const results = [];
       for (let i = 0; i < lines.length; i++) {
         if (lines[i].match(regex)) {
@@ -75,14 +81,14 @@ class Finder {
   }
 }
 
-async function searchInCurrentPage(url, findtext) {
-  const finder = new Finder(url, findtext);
+async function searchInCurrentPage(url, findtext, domSelector = "body") {
+  const finder = new Finder(url, findtext, domSelector);
   const result = await finder.findMultiple();
   return result;
 }
 
-async function searchInPage(url, findtext, page, perPage) {
-  const finder = new Finder(url, findtext);
+async function searchInPage(url, findtext, page, perPage, domSelector = "body") {
+  const finder = new Finder(url, findtext, domSelector);
   const result = await finder.findMultiple(page, perPage);
   return result;
 }

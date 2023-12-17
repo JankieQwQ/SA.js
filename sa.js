@@ -74,3 +74,15 @@ class Finder {
     }
   }
 }
+
+async function searchInCurrentPage(url, findtext) {
+  const finder = new Finder(url, findtext);
+  const result = await finder.findMultiple();
+  return result;
+}
+
+async function searchInPage(url, findtext, page, perPage) {
+  const finder = new Finder(url, findtext);
+  const result = await finder.findMultiple(page, perPage);
+  return result;
+}

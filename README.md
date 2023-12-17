@@ -1,6 +1,6 @@
 # SA.js
 
-![Logo](meta/logo.svg)
+<img src="meta/logo.svg" width = "300" height = "200" alt="Logo"/>
 
 SA.js is a JavaScript script that allows you to search for specific text within a given web page. It provides a simple way to retrieve the content of a web page and search for desired information. This can help users quickly find the text they are interested in.
 

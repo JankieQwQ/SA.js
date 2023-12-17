@@ -34,12 +34,16 @@ class Finder {
         if (matches) {
           return matches.length;
         } else {
-          return 0;
+          throw new Error("No matches found.");
         }
       })
       .catch((error) => {
         console.log(error);
-        return "[SA.JS Error] Cannot open webpage.";
+        if (error.message === "No matches found.") {
+          return "No matches found. Please try searching for something else.";
+        } else {
+          return "[SA.JS Error] Cannot open webpage.";
+        }
       });
   }
 
@@ -56,10 +60,17 @@ class Finder {
       }
       const start = page * perPage;
       const end = start + perPage;
+      if (results.length === 0) {
+        throw new Error("No matches found.");
+      }
       return results.slice(start, end);
     } catch (error) {
       console.log(error);
-      return "[SA.JS Error] Cannot open webpage.";
+      if (error.message === "No matches found.") {
+        return "No matches found. Please try searching for something else.";
+      } else {
+        return "[SA.JS Error] Cannot open webpage.";
+      }
     }
   }
 }

@@ -1,61 +1,59 @@
-class finder {
+class Finder {
   constructor(url, findtext) {
-    this.url = url;
-    this.findtext = findtext;
-    this.body = "";
+      this.url = url;
+      this.findtext = findtext;
+      this.body = "";
+      this.responseText = "";
   }
 
-  urlopen() {
-    return new Promise((resolve, reject) => {
-      const Http = new XMLHttpRequest();
-      Http.open("GET", this.url);
-      Http.setRequestHeader("Access-Control-Allow-Origin", "*");
-      Http.send();
-      Http.onreadystatechange = function() {
-        if (Http.readyState === 4) {
-          if (Http.status === 200) {
-            resolve(Http.responseText);
+  async urlopen() {
+      try {
+          const response = await fetch(this.url);
+          if (response.ok) {
+              this.responseText = await response.text();
           } else {
-            reject(new Error("[SA.JS Error] Cannot open webpage."));
+              throw new Error("[SA.JS Error] Cannot open webpage.");
           }
-        }
-      };
-    });
+      } catch (error) {
+          console.log(error);
+          throw new Error("[SA.JS Error] Cannot open webpage.");
+      }
   }
 
   find() {
-    return this.urlopen()
-      .then((responseText) => {
-        const lines = responseText.split("\n");
-        const results = [];
-        for (let i = 0; i < lines.length; i++) {
-          if (lines[i].includes(this.findtext)) {
-            results.push(lines[i]);
-          }
-        }
-        return results.length;
-      })
-      .catch((error) => {
-        console.log(error);
-        return "[SA.JS Error] Cannot open webpage.";
-      });
+      return this.urlopen()
+          .then(() => {
+              const regex = new RegExp(this.findtext, "gi");
+              const matches = this.responseText.match(regex);
+              if (matches) {
+                  return matches.length;
+              } else {
+                  return 0;
+              }
+          })
+          .catch((error) => {
+              console.log(error);
+              return "[SA.JS Error] Cannot open webpage.";
+          });
   }
-  
-  findmultiple() {
-    return this.urlopen()
-      .then((responseText) => {
-        const lines = responseText.split("\n");
-        const results = [];
-        for (let i = 0; i < lines.length; i++) {
-          if (lines[i].includes(this.findtext)) {
-            results.push(lines[i]);
+
+  async findMultiple(page = 0, perPage = 10) {
+      try {
+          await this.urlopen();
+          const regex = new RegExp(this.findtext, "gi");
+          const lines = this.responseText.split("\n");
+          const results = [];
+          for (let i = 0; i < lines.length; i++) {
+              if (lines[i].match(regex)) {
+                  results.push(lines[i]);
+              }
           }
-        }
-        return results;
-      })
-      .catch((error) => {
-        console.log(error);
-        return "[SA.JS Error] Cannot open webpage.";
-      });
+          const start = page * perPage;
+          const end = start + perPage;
+          return results.slice(start, end);
+      } catch (error) {
+          console.log(error);
+          return "[SA.JS Error] Cannot open webpage.";
+      }
   }
 }
